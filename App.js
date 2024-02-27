@@ -50,6 +50,16 @@ export default function App() {
     }
   };
 
+  const handleAppInit = () => {
+    if (ref?.current) {
+      ref?.current?.injectJavaScript(
+        `
+        window.postMessage(JSON.stringify({type: "AppInit", data: {host: "${host}", skipAuthScreen: true}}));
+        `
+      );
+    }
+  }
+
   return (
     <View style={styles.container}>
       
@@ -82,7 +92,10 @@ export default function App() {
           if(eventData.type === "inHome") {
             setIsHome(true);
           }
-          console.log(eventData.type, eventData.data);
+          if(eventData.type === "AppInit") {
+            handleAppInit();
+          }
+          // console.log(eventData.type, eventData.data);
         }}
         webviewDebuggingEnabled={true}
         onError={(event) => {
